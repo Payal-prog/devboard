@@ -5,7 +5,14 @@ on:
     branches: [master]
 
 jobs:
+  code-lint:
+    runs-on: ubuntu-latest
+    steps:
+     - name: Checkout code
+       uses: actions/checkout@v7
+       
   build-and-push:
+    needs: [code-lint]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
