@@ -1,4 +1,5 @@
 # Goal : Build the image for Devboard frontend and push to Docker Hub
+# Requires docker hub username and password/PAT
 
 name: CI
 
