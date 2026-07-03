@@ -28,6 +28,8 @@ jobs:
         # run: echo "${{ vars.DOCKERHUB_USERNAME }}"
         uses: docker/build-push-action@v7
         with:
+          context: ./frontend
+          file: ./frontend/Dockerfile
           push: true
           tags: ${{ vars.DOCKERHUB_USERNAME }}/devboard-fe-master:latest
         
