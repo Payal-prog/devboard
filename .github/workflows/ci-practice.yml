@@ -1,0 +1,24 @@
+# Goal:  Lint, Build, Test the code for Frontend & Backend and push the images to DockerHub.
+ 
+name: CI
+
+on: 
+    push:
+        branches: [advanced]
+
+jobs: 
+    front-end:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout Code                   # Both frontend and backend code will be checked out in this step
+              uses: actions/checkout@v7
+
+            - name: Lint
+        
+            
+            - name: Build
+     
+
+            - name: Test
+   
+    backend:     
