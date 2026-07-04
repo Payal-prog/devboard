@@ -22,11 +22,11 @@ jobs:
         
             - name: Install npm Packages
               run: npm ci
-            #   working-directory: frontend
+              working-directory: frontend
 
             - name: Frontend Linter
               run: npm run lint
-            #   working-directory: frontend
+              working-directory: frontend
         
             # - name: Build
             #   run: npm run build
@@ -34,7 +34,7 @@ jobs:
 
             - name: Run tests
               run: npm run test
-            #   working-directory: frontend
+              working-directory: frontend
 
     # backend:     
 
