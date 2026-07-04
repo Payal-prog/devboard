@@ -27,10 +27,6 @@ jobs:
             - name: Frontend Linter
               run: npm run lint
               working-directory: frontend
-        
-            # - name: Build
-            #   run: npm run build
-            #   working-directory: frontend
 
             - name: Run tests
               run: npm run test
@@ -49,5 +45,47 @@ jobs:
                 push: true
                 tags: ${{ vars.DOCKERHUB_USERNAME }}/devboard-frontend:latest
 
-    # backend:     
+    backend:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout Code                                   # Both frontend and backend code will be checked out in this step
+              uses: actions/checkout@v7
+
+            - name: Setup Go                                        # This borrows a pre-made tool created by GitHub designed to install Go.
+              uses: actions/setup-go@v6
+              with:
+                go-version: '1.23'    
+                go-version-file: backend/go.mod                     # Version of Go to install
+                cache-dependency-path: backend/go.sum               # This tells GitHub exactly where to look to see what packages your project needs. GitHub looks at this specific file (go.sum) inside your backend folder.
+        
+            - name: Run Go Formatter
+              run: go fmt
+              working-directory: backend
+            
+            - name: Run Go Vet
+              run: go vet
+              working-directory: backend
+
+            - name: Run tests
+              run: go test 
+              working-directory: backend
+
+            # - name: Backend Linter
+            #   run: go lint 
+            #   working-directory: backend
+
+
+            - name: Docker Setup [Login]
+              uses: docker/login-action@v4
+              with:
+                username: ${{ vars.DOCKERHUB_USERNAME }}
+                password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+            - name: Docker Build and Push
+              uses: docker/build-push-action@v7
+              with:
+                context: ./backend                     # Build's context is the set of files located in the specified PATH or URL
+                push: true
+                tags: ${{ vars.DOCKERHUB_USERNAME }}/devboard-backend:latest
+     
 
