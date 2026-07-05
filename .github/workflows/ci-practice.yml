@@ -1,63 +1,90 @@
-# Goal : Build the image for Devboard frontend and push to Docker Hub
-# Requires docker hub username and password/PAT 
+# Goal:  Lint, Build, Test the code for Frontend & Backend and push the images to DockerHub.
 
-name: CI
+name: CI-practice
 
-on:
-  push:
-    branches: [master]
+on: 
+    push:
+        branches: [advanced]
 
-jobs:
-  code-lint:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./frontend
+jobs: 
+    front-end:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout Code                                   # Both frontend and backend code will be checked out in this step
+              uses: actions/checkout@v7
 
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20' # Specify your project's Node version
-          cache: 'npm'       # Automatically caches npm dependencies
-          cache-dependency-path: ./frontend/package-lock.json
-
-      - name: Install Dependencies
-        run: npm ci
-
-      - name: Run ESLint
-        run: npm run lint
-  
-  build-and-push:
-    needs: [code-lint]
-    runs-on: ubuntu-latest
-    steps:
-      # 1. Check out the repository code
-      - name: Checkout Code
-        uses: actions/checkout@v7
-
-      # 2. Log in to Docker Hub
-      - name: Login to docker hub
-        uses: docker/login-action@v4 
-        with:
-          username:  ${{ vars.DOCKERHUB_USERNAME }}
-          password:  ${{ secrets.DOCKERHUB_TOKEN }}
-          
-      # 3: Build and push the Docker image to your repository
-      - name: Docker build and push
-        # run: echo "${{ vars.DOCKERHUB_USERNAME }}"
-        uses: docker/build-push-action@v7
-        with:
-          context: ./frontend
-          file: ./frontend/Dockerfile
-          push: true
-          tags: ${{ vars.DOCKERHUB_USERNAME }}/devboard-fe-master:latest
+            - name: Setup NodeJs                                    # This borrows a pre-made tool created by GitHub designed to install Node.js.
+              uses: actions/setup-node@v6
+              with:
+                node-version: '20'                                  # Version of Node.js to install
+                cache: npm                                          # This activates a "memory" feature. Instead of downloading all your project's code packages from the internet every single time, GitHub saves a copy of them. This makes your future builds run much faster.
+                cache-dependency-path: frontend/package-lock.json   # This tells GitHub exactly where to look to see what packages your project needs. GitHub looks at this specific file (package-lock.json) inside your frontend folder.
         
-      
+            - name: Install npm Packages
+              run: npm ci
+              working-directory: frontend
 
-    
-  
-    
+            - name: Frontend Linter
+              run: npm run lint
+              working-directory: frontend
+
+            - name: Run tests
+              run: npm run test
+              working-directory: frontend
+
+            - name: Docker Setup [Login]
+              uses: docker/login-action@v4
+              with:
+                username: ${{ vars.DOCKERHUB_USERNAME }}
+                password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+            - name: Docker Build and Push
+              uses: docker/build-push-action@v7
+              with:
+                context: ./frontend                     # Build's context is the set of files located in the specified PATH or URL
+                push: true
+                tags: ${{ vars.DOCKERHUB_USERNAME }}/devboard-frontend:latest
+
+    backend:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout Code                                   # Both frontend and backend code will be checked out in this step
+              uses: actions/checkout@v7
+
+            - name: Setup Go                                        # This borrows a pre-made tool created by GitHub designed to install Go.
+              uses: actions/setup-go@v6
+              with:
+                go-version: '1.23'    
+                go-version-file: backend/go.mod                     # Version of Go to install
+                cache-dependency-path: backend/go.sum               # This tells GitHub exactly where to look to see what packages your project needs. GitHub looks at this specific file (go.sum) inside your backend folder.
+        
+            - name: Run Go Formatter
+              run: go fmt
+              working-directory: backend
+            
+            - name: Run Go Vet
+              run: go vet
+              working-directory: backend
+
+            - name: Run tests
+              run: go test 
+              working-directory: backend
+
+            - name: Docker Setup [Login]
+              uses: docker/login-action@v4
+              with:
+                username: ${{ vars.DOCKERHUB_USERNAME }}
+                password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+            - name: Docker Build and Push
+              uses: docker/build-push-action@v7
+              with:
+                context: ./backend                             # Build's context is the set of files located in the specified PATH or URL
+                push: true
+                tags: ${{ vars.DOCKERHUB_USERNAME }}/devboard-backend:latest
+
+    deploy:
+        needs: [front-end, backend]                            # This job will only run if both the front-end and back-end jobs have completed successfully.
+        uses: ./.github/workflows/cd-practice.yml              # This line tells GitHub to use the CD-practice workflow defined in the .github/workflows/cd-practice.yml file. It allows you to reuse the deployment steps defined in that workflow without having to duplicate them here.
+        secrets: inherit                                       # This line tells GitHub to pass all the secrets from the current workflow to the CD-practice workflow. This is important because the CD-practice workflow may need access to certain secrets (like DockerHub credentials) to perform its tasks.
+
