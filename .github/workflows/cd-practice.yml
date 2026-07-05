@@ -14,7 +14,6 @@ on:
 
 jobs: 
     deploy:
-        if: ${{ github.event.workflow_run.conclusion == 'success' }}  
         # Important to add!!! This condition checks if the CI workflow has completed successfully. If it has, the deployment job will run; otherwise, it will be skipped.
         runs-on: self-hosted
         steps: 
