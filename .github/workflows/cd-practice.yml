@@ -4,11 +4,13 @@
 name: CD-practice
 
 on: 
-    workflow_run:                               # Tells GitHub to wait for a different workflow to finish before starting this one.
-        workflows: ["CI-practice"]              # This specifies the name of the workflow that should trigger this one. In this case, it's the "CI-practice" workflow.
-        types:
-            - completed                         # This specifies that this workflow should only be triggered when the "CI-practice" workflow has completed, regardless of whether it was successful or failed.
-        branches: [advanced]                    # If someone runs the "CI-practice" workflow on a main, dev, or feature branch, this workflow will not run.
+  workflow_dispatch:
+      
+    # workflow_run:                               # Tells GitHub to wait for a different workflow to finish before starting this one.
+    #     workflows: ["CI-practice"]              # This specifies the name of the workflow that should trigger this one. In this case, it's the "CI-practice" workflow.
+    #     types:
+    #         - completed                         # This specifies that this workflow should only be triggered when the "CI-practice" workflow has completed, regardless of whether it was successful or failed.
+    #     branches: [advanced]                    # If someone runs the "CI-practice" workflow on a main, dev, or feature branch, this workflow will not run.
 
 jobs: 
     deploy:
