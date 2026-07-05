@@ -4,8 +4,7 @@
 name: CD-practice
 
 on: 
-  workflow_dispatch:
-      
+  workflow_call:                                  # used to indicate that a workflow can be called by another workflow.
     # workflow_run:                               # Tells GitHub to wait for a different workflow to finish before starting this one.
     #     workflows: ["CI-practice"]              # This specifies the name of the workflow that should trigger this one. In this case, it's the "CI-practice" workflow.
     #     types:
@@ -14,7 +13,6 @@ on:
 
 jobs: 
     deploy:
-        # Important to add!!! This condition checks if the CI workflow has completed successfully. If it has, the deployment job will run; otherwise, it will be skipped.
         runs-on: self-hosted
         steps: 
             - name: Checkout Code
