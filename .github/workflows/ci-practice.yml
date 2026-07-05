@@ -85,14 +85,7 @@ jobs:
 
     deploy:
         needs: [front-end, backend]                            # This job will only run if both the front-end and back-end jobs have completed successfully.
-        # runs-on: ubuntu-latest
         uses: ./.github/workflows/cd-practice.yml              # This line tells GitHub to use the CD-practice workflow defined in the .github/workflows/cd-practice.yml file. It allows you to reuse the deployment steps defined in that workflow without having to duplicate them here.
         secrets: inherit                                       # This line tells GitHub to pass all the secrets from the current workflow to the CD-practice workflow. This is important because the CD-practice workflow may need access to certain secrets (like DockerHub credentials) to perform its tasks.
-        # steps:
-        #     - name: Trigger CD workflow
-        #       uses: benc-uk/workflow-dispatch@v1
-        #       with:
-        #         workflow: CD-practice
-        #         token: ${{ secrets.GITHUB_TOKEN }}
-     
+
 
