@@ -29,8 +29,8 @@ jobs:
 
             - name: Deploy containers using docker-compose
               run: |                                        # The pipe symbol (|) is YAML syntax that allows you to write multiple lines of commands instead of just one.
-                docker-compose pull                         
-                docker-compose up -d 
+                docker compose pull                         
+                docker compose up -d 
               
               # Pulls the latest images from Docker Hub to the server, for the services defined in the docker-compose.yml file.
               # 'up tells docker compose to start the containers, and '-d' runs them in detached mode (in the background).
