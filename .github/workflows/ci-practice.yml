@@ -1,6 +1,6 @@
 # Goal:  Lint, Build, Test the code for Frontend & Backend and push the images to DockerHub.
 
-name: CI
+name: CI-practice
 
 on: 
     push:

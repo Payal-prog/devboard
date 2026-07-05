@@ -1,7 +1,7 @@
 # Goal: to deploy the built images from CI steps once the CI workflow is successful. 
 # This workflow will be triggered by the CI workflow once it is successful.
 
-name: CD
+name: CD-practice
 
 on: 
     workflow_run:
