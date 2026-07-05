@@ -1,0 +1,63 @@
+# Goal : Build the image for Devboard frontend and push to Docker Hub
+# Requires docker hub username and password/PAT 
+
+name: CI
+
+on:
+  push:
+    branches: [master]
+
+jobs:
+  code-lint:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./frontend
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20' # Specify your project's Node version
+          cache: 'npm'       # Automatically caches npm dependencies
+          cache-dependency-path: ./frontend/package-lock.json
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Run ESLint
+        run: npm run lint
+  
+  build-and-push:
+    needs: [code-lint]
+    runs-on: ubuntu-latest
+    steps:
+      # 1. Check out the repository code
+      - name: Checkout Code
+        uses: actions/checkout@v7
+
+      # 2. Log in to Docker Hub
+      - name: Login to docker hub
+        uses: docker/login-action@v4 
+        with:
+          username:  ${{ vars.DOCKERHUB_USERNAME }}
+          password:  ${{ secrets.DOCKERHUB_TOKEN }}
+          
+      # 3: Build and push the Docker image to your repository
+      - name: Docker build and push
+        # run: echo "${{ vars.DOCKERHUB_USERNAME }}"
+        uses: docker/build-push-action@v7
+        with:
+          context: ./frontend
+          file: ./frontend/Dockerfile
+          push: true
+          tags: ${{ vars.DOCKERHUB_USERNAME }}/devboard-fe-master:latest
+        
+      
+
+    
+  
+    
