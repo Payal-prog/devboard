@@ -25,7 +25,11 @@ jobs:
                 node-version: '20'                                  # Version of Node.js to install
                 cache: npm                                          # This activates a "memory" feature. Instead of downloading all your project's code packages from the internet every single time, GitHub saves a copy of them. This makes your future builds run much faster.
                 cache-dependency-path: frontend/package-lock.json   # This tells GitHub exactly where to look to see what packages your project needs. GitHub looks at this specific file (package-lock.json) inside your frontend folder.
-        
+            
+            - name: Install Dependencies and Sync Lock File
+              run: npm install
+              working-directory: frontend
+
             - name: Install npm Packages
               run: npm ci
               working-directory: frontend
@@ -67,6 +71,7 @@ jobs:
     # 3-  Build and Push the Docker Images for Frontend & Backend
     build-push:
         runs-on: ubuntu-latest
+        needs: [lint-frontend, lint-backend]                           # This job will only run if both the front-end and back-end jobs have completed successfully.
         strategy:
             fail-fast: false
             matrix:
@@ -92,7 +97,7 @@ jobs:
 
     # 4-  Deploy the Docker Images to the Server
     deploy:
-        needs: [lint-frontend, lint-backend, build-push]               # This job will only run if both the front-end and back-end jobs have completed successfully.
+        needs: [build-push]               # This job will only run if both the front-end and back-end jobs have completed successfully.
         uses: ./.github/workflows/cd-practice.yml                      # This line tells GitHub to use the CD-practice workflow defined in the .github/workflows/cd-practice.yml file. It allows you to reuse the deployment steps defined in that workflow without having to duplicate them here.
         secrets: inherit                                               # This line tells GitHub to pass all the secrets from the current workflow to the CD-practice workflow. This is important because the CD-practice workflow may need access to certain secrets (like DockerHub credentials) to perform its tasks.
 
