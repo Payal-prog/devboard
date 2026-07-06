@@ -19,10 +19,10 @@ jobs:
       - name: Setup Go 1.23
         uses: actions/setup-go@v6
         with:
-          go-version: ${{ matrix.go }}  # This uses the current Go version from the matrix for this job run.
-          go-version-file: go.mod
-          cache-dependency-path: go.sum
-
+          go-version: ${{ matrix.go }}              # This uses the current Go version from the matrix for this job run.
+          go-version-file: backend/go.mod           # Go-version-file specifies the path to the go.mod file, which contains the Go version required for the project. This ensures that the correct version of Go is used for building and testing the backend code.
+          cache-dependency-path: backend/go.sum     # cache-dependency-path specifies the path to the go.sum file, which contains checksums for the dependencies used in the project. This allows GitHub Actions to cache dependencies and speed up subsequent runs of the workflow.
+                                                    # Checksum files are used to verify the integrity of the dependencies, ensuring that the same versions are used across different environments and builds. By caching these dependencies, the workflow can avoid downloading them again in future runs, improving efficiency and reducing build times.
       - name: Run Go Formatter
         run: go fmt
         working-directory: backend
