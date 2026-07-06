@@ -4,7 +4,10 @@ name: CI-practice
 
 on: 
     push:
-        branches: [advanced]
+      paths:
+      - '**'
+      - '!.github/workflows/**'
+      branches: [master]
 
 jobs: 
     front-end:
