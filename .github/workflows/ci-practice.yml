@@ -91,4 +91,3 @@ jobs:
         uses: ./.github/workflows/cd-practice.yml              # This line tells GitHub to use the CD-practice workflow defined in the .github/workflows/cd-practice.yml file. It allows you to reuse the deployment steps defined in that workflow without having to duplicate them here.
         secrets: inherit                                       # This line tells GitHub to pass all the secrets from the current workflow to the CD-practice workflow. This is important because the CD-practice workflow may need access to certain secrets (like DockerHub credentials) to perform its tasks.
 
-
