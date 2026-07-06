@@ -34,4 +34,6 @@ jobs:
               
               # Pulls the latest images from Docker Hub to the server, for the services defined in the docker-compose.yml file.
               # 'up tells docker compose to start the containers, and '-d' runs them in detached mode (in the background).
-              # This step tells the automation server to download the newest versions of your application's Docker images and then start (or restart) those containers in the background so your app goes live. 
+              # This step tells the automation server to download the newest versions of your application's Docker images and then start (or restart) those containers in the background so your app goes live.
+              # Using this to trigger workflow
+              
