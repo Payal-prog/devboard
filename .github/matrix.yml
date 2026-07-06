@@ -3,7 +3,9 @@
 name: Go Linter Practice
 
 on:
-  workflow_dispatch:  # This event allows you to manually trigger the workflow from the GitHub Actions tab in your repository. It is useful for testing and debugging workflows without needing to push code changes.
+  schedule:
+    - cron: '36 16 * * *'  
+  #workflow_dispatch:  # This event allows you to manually trigger the workflow from the GitHub Actions tab in your repository. It is useful for testing and debugging workflows without needing to push code changes.
 
 jobs:
   code-format:
