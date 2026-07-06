@@ -3,11 +3,13 @@
 name: CI-practice
 
 on: 
-    push:
-      paths:                                                        # Trigger this workflow whenever someone pushes code to the feat branch
-      - '**'
-      - '!.github/workflows/**'                                     # BUT completely ignore the push if the only changes made were inside the .github/workflows/ directory.
-      branches: [feat]
+    push:     
+      branches: [feat]                                                 
+      #  Trigger this workflow whenever someone pushes code to the feat branch
+      # paths:
+      # - '**'
+      # - '!.github/workflows/**'                                     # BUT completely ignore the push if the only changes made were inside the .github/workflows/ directory.
+      
 
 jobs: 
     # 1-  Linting and Testing the Frontend  
