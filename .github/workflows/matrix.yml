@@ -1,4 +1,6 @@
 # Goal - to install multiple versions of Go and perform linting and testing on each version. 
+# Matrix strategy is used to run the same job with different configurations, in this case, different versions of Go. 
+# This allows you to ensure that your code works correctly across multiple versions of the Go programming language.
 
 name: Go Linter Practice
 
@@ -21,6 +23,7 @@ jobs:
         with:
           go-version: ${{ matrix.go }}              # This uses the current Go version from the matrix for this job run.
           go-version-file: backend/go.mod           # Go-version-file specifies the path to the go.mod file, which contains the Go version required for the project. This ensures that the correct version of Go is used for building and testing the backend code.
+          # When both go-version and go-version-file inputs are specified, only go-version will be used
           cache-dependency-path: backend/go.sum     # cache-dependency-path specifies the path to the go.sum file, which contains checksums for the dependencies used in the project. This allows GitHub Actions to cache dependencies and speed up subsequent runs of the workflow.
                                                     # Checksum files are used to verify the integrity of the dependencies, ensuring that the same versions are used across different environments and builds. By caching these dependencies, the workflow can avoid downloading them again in future runs, improving efficiency and reducing build times.
       - name: Run Go Formatter
