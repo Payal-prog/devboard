@@ -4,7 +4,14 @@
 name: CD-practice
 
 on: 
-  workflow_call:                                  # used to indicate that a workflow can be called by another workflow.
+  workflow_dispatch:                                                # This event allows you to manually trigger the workflow from the GitHub Actions tab in your repository. It is useful for testing and debugging workflows without needing to push code changes.
+    # push:
+    #   paths:
+    #   - '**'
+    #   - '!.github/workflows/**'
+    #   branches: [master]
+    
+  #workflow_call:                                  # used to indicate that a workflow can be called by another workflow.
     # workflow_run:                               # Tells GitHub to wait for a different workflow to finish before starting this one.
     #     workflows: ["CI-practice"]              # This specifies the name of the workflow that should trigger this one. In this case, it's the "CI-practice" workflow.
     #     types:

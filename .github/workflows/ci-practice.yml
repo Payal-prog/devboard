@@ -2,12 +2,13 @@
 
 name: CI-practice
 
-on: 
-    push:
-      paths:
-      - '**'
-      - '!.github/workflows/**'
-      branches: [master]
+on:
+  workflow_dispatch:                                                # This event allows you to manually trigger the workflow from the GitHub Actions tab in your repository. It is useful for testing and debugging workflows without needing to push code changes.
+    # push:
+    #   paths:
+    #   - '**'
+    #   - '!.github/workflows/**'
+    #   branches: [master]
 
 jobs: 
     front-end:
@@ -78,6 +79,12 @@ jobs:
               with:
                 username: ${{ vars.DOCKERHUB_USERNAME }}
                 password: ${{ secrets.DOCKERHUB_TOKEN }}
+            
+            # - name: Code quality check
+            #   uses: ./.github/workflows/code-quality.yml
+            #   with:
+            #     DOCKERHUB_USERNAME: ${{ vars.DOCKERHUB_USERNAME }}
+            #     DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
 
             - name: Docker Build and Push
               uses: docker/build-push-action@v7

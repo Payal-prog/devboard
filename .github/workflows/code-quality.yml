@@ -3,7 +3,7 @@
 name: Code Quality
 
 on:
-    workflow_call:  # you can call this workflow before/after any other workflow
+    workflow_call:                                                  # used to indicate that a workflow can be called by another workflow.
 
 jobs:
     sast:
@@ -20,11 +20,11 @@ jobs:
                 cache-dependency-path: frontend/package-lock.json
             
             - name: Install npm Packages
-              run: npm install --legacy-peer-deps
+              run: npm install 
               working-directory: frontend
 
             - name: Run Linter
-              run: npm run lint
+              run: npm run lint               # npm run lint is a command that runs the 'linter script' defined in the package.json file of a Node.js project. The linter checks the code for potential errors, coding style issues, and other problems based on predefined rules.
               working-directory: frontend
 
             - name: Setup Go
