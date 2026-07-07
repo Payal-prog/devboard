@@ -6,7 +6,7 @@ name: Go Linter Practice
 
 on:
   schedule:
-    - cron: '15 11 * * *'    # This event allows you to manually trigger the workflow from the GitHub Actions tab in your repository. It is useful for testing and debugging workflows without needing to push code changes.
+    - cron: '*/5 * * * *'    # This event runs the workflow every 5 minutes, which is the minimum frequency allowed by GitHub Actions.
 
 jobs:
   code-format:
