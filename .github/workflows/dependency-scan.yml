@@ -38,7 +38,9 @@ jobs:
           cache-dependency-path: backend/go.sum  
 
       - name: Install govulncheck tool
-        run: go install golang.org/x/vuln/cmd/govulncheck@latest
+        run: go install golang.org/x/vuln/cmd/govulncheck@v1.1.4
+        # run: go install golang.org/x/vuln/cmd/govulncheck@latest
+        # An error occurs because the @latest version of govulncheck requires Go version 1.25.0 or newer, but our system is currently running Go 1.22.12 with GOTOOLCHAIN=local, which prevents it from automatically upgrading
 
       - name: Run the scan
         run: govulncheck ./...
