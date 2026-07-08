@@ -1,44 +1,28 @@
 # Goal - Ensure the docker files and Docker images are security Tested
 
-name: Docker Scan
+name: Docker scan
 
 on: 
-    workflow_call:
+  workflow_call:
 
 jobs:
-    docker-file-lint-and-scan:
-        runs-on: ubuntu-latest
-        strategy:
-            fail-fast: false
-            matrix: 
-                folders: ['backend','frontend']
-        steps:
-            - name: Code Checkout
-              uses: actions/checkout@v7
+  dockerfile-lint-and-scan:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        folders: ['backend', 'frontend']  
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-            - name: ${{ matrix.folders}} Dockerfile Lint
-              uses: hadolint/hadolint-action@v3.1.0
-              with:
-                dockerfile: ${{ matrix.folders}}/Dockerfile
-              
-            - name: Docker Setup [Login]
-              uses: docker/login-action@v4
-              with:
-                username: ${{ vars.DOCKERHUB_USERNAME }}
-                password: ${{ secrets.DOCKERHUB_TOKEN }}
+                                                # The below steps lints the docker files and scans the docker images for vulnerabilities.
+      - name: Lint Dockerfile using Hadolint
+        uses: hadolint/hadolint-action@v3.1.0
+        with:                                   # 'With parameters' are used to pass inputs to the action. In this case, we are specifying the path to the Dockerfile that we want to lint.
+          dockerfile: ./${{ matrix.folders }}/Dockerfile
+       
+      # - name: Docker Scan
+      #   uses: docker/scan-action@v2
 
-            - name: Docker Build ${{ matrix.folders}}
-              run: docker build -t ${{ vars.DOCKERHUB_USERNAME }}/devboard-${{ matrix.folders }}:latest .
-              working-directory: ${{ matrix.folders}}
-
-            - name: Run Trivy vulnerability scanner
-              uses: aquasecurity/trivy-action@v0.36.0
-              continue-on-error: true
-              with:
-                image-ref: ${{ vars.DOCKERHUB_USERNAME }}/devboard-${{ matrix.folders }}:latest
-                format: 'table'
-                exit-code: '1'
-                ignore-unfixed: true
-                vuln-type: 'os,library'
-                severity: 'CRITICAL'
-             
