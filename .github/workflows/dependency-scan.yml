@@ -24,13 +24,12 @@ jobs:
           cache-dependency-path: frontend/package-lock.json   # This tells GitHub exactly where to look to see what packages your project needs. GitHub looks at this specific file (package-lock.json) inside your frontend folder.
         
       - name: Install npm Packages
-        run: npm ci
+        run: npm ci --legacy-peer-deps
         working-directory: frontend
 
       - name: Run npm audit                                   # Your existing Node.js package manager has a built-in security auditing tool. It checks your package.json and lockfiles against databases of known vulnerabilities.
         run: npm audit
         working-directory: frontend
-
 
       - name: Setup Go
         uses: actions/setup-go@v6
