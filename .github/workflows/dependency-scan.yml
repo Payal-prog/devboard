@@ -45,7 +45,7 @@ jobs:
 
       - name: Run the scan
         continue-on-error: true                                             # IMPORTANT: This allows the workflow to continue even if the scan finds vulnerabilities, ensuring that the report is generated and uploaded regardless of the scan results.
-        run: govulncheck ./... > reports/dependency-scan-report.txt         # This allows the workflow to add the report to the artifacts, which can be downloaded and reviewed later. The report will contain details of any vulnerabilities found during the scan.
+        run: govulncheck ./... > ./reports/dependency-scan-report.txt         # This allows the workflow to add the report to the artifacts, which can be downloaded and reviewed later. The report will contain details of any vulnerabilities found during the scan.
         working-directory: backend
 
       - name: Upload Report to artifacts
@@ -54,7 +54,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: dependency-scan-report
-          path: reports/dependency-scan-report.txt
+          path: ./reports/dependency-scan-report.txt 
           retention-days: 7                                                 # This specifies how long the uploaded artifact will be retained in GitHub's storage. After this period, the artifact will be automatically deleted.
       
 

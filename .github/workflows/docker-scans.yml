@@ -4,7 +4,6 @@ name: Docker scan
 
 on: 
   workflow_call:
-
 jobs:
   dockerfile-lint-and-scan:
     runs-on: ubuntu-latest
@@ -23,6 +22,28 @@ jobs:
         with:                                   # 'With parameters' are used to pass inputs to the action. In this case, we are specifying the path to the Dockerfile that we want to lint.
           dockerfile: ./${{ matrix.folders }}/Dockerfile
        
-      # - name: Docker Scan
-      #   uses: docker/scan-action@v2
+      # Hadolint - If there are any syntax errors or best practice violations in the Dockerfile, Hadolint will report them in the GitHub Actions log. 
+      
+      - name: Docker Setup [Login]
+        uses: docker/login-action@v4
+        with:
+          username: ${{ vars.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Docker Build ${{ matrix.folders }}
+        run: docker build -t ${{ vars.DOCKERHUB_USERNAME }}/devboard-${{ matrix.folders }}:latest . 
+        # Docker build command is used to build a Docker image from the Dockerfile located in the specified directory. 
+        # The '-t' flag tags the image with a name, which in this case is constructed using the Docker Hub username and the folder name (either 'backend' or 'frontend'). 
+        # The '.' at the end specifies the build context, which is the current directory of the specified folder.
+        
+        working-directory: ./${{ matrix.folders }}
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          image-ref: ${{ vars.DOCKERHUB_USERNAME }}/devboard-${{ matrix.folders }}:latest 
+          exit-code: '1'
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH'
 
