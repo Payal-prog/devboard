@@ -9,9 +9,9 @@ jobs:
   code-format:
     runs-on: ubuntu-latest
     strategy:
-      fail-fast: false                  # Setting fail-fast to false prevents GitHub from canceling all in-progress jobs if any matrix job fails.
+      fail-fast: false                              # Setting fail-fast to false prevents GitHub from canceling all in-progress jobs if any matrix job fails.
       matrix:
-        go: ['1.22', '1.22', '1.24']    # This defines a matrix of Go versions to test against. The workflow will run once for each version specified in this list.
+        go: ['1.22', '1.22', '1.24']                # This defines a matrix of Go versions to test against. The workflow will run once for each version specified in this list.
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
