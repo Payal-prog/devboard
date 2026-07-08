@@ -1,47 +1,55 @@
 # Goal - I have to ensure the packages & dependencies have been audited for Security
+# To perform a dependency scan for a Go (Golang) project, the most effective, standard tool is govulncheck, 
+# which is the official vulnerability scanner developed by the Go team. Unlike traditional scanners that blindly 
+# flag any package listed in your go.mod, govulncheck uses static analysis to check if your code actually calls the 
+# vulnerable functions, dramatically reducing false positives.
 
-name: Dependecy scan
+name: Dependency scan practice
 
 on:
-    workflow_call:
+  workflow_call:
 
 jobs:
-    dependency-scan:
-        runs-on: ubuntu-latest
-        steps:
-            - name: Code Checkout
-              uses: actions/checkout@v7
+  dependency-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Code checkout
+        uses: actions/checkout@v7
 
-            - name: Setup Go
-              uses: actions/setup-go@v6
-              with:
-                go-version: 1.22
-                go-version-file: 'go.mod'
-                cache-dependency-path: go.sum
+      - name: Setup NodeJs                                    # This borrows a pre-made tool created by GitHub designed to install Node.js.
+        uses: actions/setup-node@v6
+        with:
+          node-version: '20'                                  # Version of Node.js to install
+          cache: npm                                          # This activates a "memory" feature. Instead of downloading all your project's code packages from the internet every single time, GitHub saves a copy of them. This makes your future builds run much faster.
+          cache-dependency-path: frontend/package-lock.json   # This tells GitHub exactly where to look to see what packages your project needs. GitHub looks at this specific file (package-lock.json) inside your frontend folder.
+        
+      - name: Install npm Packages
+        run: npm ci
+        working-directory: frontend
 
-            - name: Install Govulncheck
-              run: go install golang.org/x/vuln/cmd/govulncheck@v1.1.4
+      - name: Run npm audit                                   # Your existing Node.js package manager has a built-in security auditing tool. It checks your package.json and lockfiles against databases of known vulnerabilities.
+        run: npm audit
+        working-directory: frontend
 
-            - name: GoVulncheck
-              continue-on-error: true
-              run: govulncheck ./... > govulncheck-report.txt
-              working-directory: backend
 
-            - name: Setup Node
-              uses: actions/setup-node@v6
-              with:
-                node-version: '20'
-                cache: npm
-                cache-dependency-path: frontend/package-lock.json
+      - name: Setup Go
+        uses: actions/setup-go@v6
+        with:
+          go-version: 1.22                                         # Specifies the Go version to be used in the workflow.
+          cache-dependency-path: backend/go.sum  
 
-            - name: Run Dependency Scan for Node
-              run: npm audit
-              working-directory: frontend
+      - name: Install govulncheck tool
+        run: go install golang.org/x/vuln/cmd/govulncheck@latest
 
-            - name: Upload Report to Artifacts
-              if: always() # Ensures report uploads even if tests fail
-              uses: actions/upload-artifact@v4
-              with:
-                name: dependency-scan-report
-                path: reports/dependency-report.txt
-                retention-days: 5
+      - name: Run the scan
+        run: govulncheck ./...
+        working-directory: backend
+
+
+          
+
+
+
+
+
+
