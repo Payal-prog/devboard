@@ -16,25 +16,25 @@ jobs:
       - name: Code checkout
         uses: actions/checkout@v7
 
-      - name: Setup NodeJs                                    # This borrows a pre-made tool created by GitHub designed to install Node.js.
+      - name: Setup NodeJs                                                  # This borrows a pre-made tool created by GitHub designed to install Node.js.
         uses: actions/setup-node@v6
         with:
-          node-version: '20'                                  # Version of Node.js to install
-          cache: npm                                          # This activates a "memory" feature. Instead of downloading all your project's code packages from the internet every single time, GitHub saves a copy of them. This makes your future builds run much faster.
-          cache-dependency-path: frontend/package-lock.json   # This tells GitHub exactly where to look to see what packages your project needs. GitHub looks at this specific file (package-lock.json) inside your frontend folder.
+          node-version: '20'                                                # Version of Node.js to install
+          cache: npm                                                        # This activates a "memory" feature. Instead of downloading all your project's code packages from the internet every single time, GitHub saves a copy of them. This makes your future builds run much faster.
+          cache-dependency-path: frontend/package-lock.json                 # This tells GitHub exactly where to look to see what packages your project needs. GitHub looks at this specific file (package-lock.json) inside your frontend folder.
         
       - name: Install npm Packages
         run: npm ci --legacy-peer-deps
         working-directory: frontend
 
-      - name: Run npm audit                                   # Your existing Node.js package manager has a built-in security auditing tool. It checks your package.json and lockfiles against databases of known vulnerabilities.
+      - name: Run npm audit                                                 # Your existing Node.js package manager has a built-in security auditing tool. It checks your package.json and lockfiles against databases of known vulnerabilities.
         run: npm audit
         working-directory: frontend
 
       - name: Setup Go
         uses: actions/setup-go@v6
         with:
-          go-version: 1.22                                         # Specifies the Go version to be used in the workflow.
+          go-version: 1.22                                                  # Specifies the Go version to be used in the workflow.
           cache-dependency-path: backend/go.sum  
 
       - name: Install govulncheck tool
@@ -43,8 +43,19 @@ jobs:
         # An error occurs because the @latest version of govulncheck requires Go version 1.25.0 or newer, but our system is currently running Go 1.22.12 with GOTOOLCHAIN=local, which prevents it from automatically upgrading
 
       - name: Run the scan
-        run: govulncheck ./...
+        continue-on-error: true                                             # IMPORTANT: This allows the workflow to continue even if the scan finds vulnerabilities, ensuring that the report is generated and uploaded regardless of the scan results.
+        run: govulncheck ./... > reports/dependency-scan-report.txt         # This allows the workflow to add the report to the artifacts, which can be downloaded and reviewed later. The report will contain details of any vulnerabilities found during the scan.
         working-directory: backend
+
+      - name: Upload Report to artifacts
+        if: always()                                                       
+                                                                            # This ensures that the report is uploaded even if the previous steps fail, allowing for post-mortem analysis.
+        uses: actions/upload-artifact@v4
+        with:
+          name: dependency-scan-report
+          path: reports/dependency-scan-report.txt
+          retention-days: 7                                                 # This specifies how long the uploaded artifact will be retained in GitHub's storage. After this period, the artifact will be automatically deleted.
+      
 
 
           
