@@ -5,6 +5,8 @@ on:
         branches: [master]
 
 jobs:
+    # The different workflows will run in parallel, and each workflow will have its own set of jobs. 
+    # The jobs within a workflow will also run in parallel, unless you specify dependencies between them.
     code-quality:
         uses: ./.github/workflows/code-quality.yml
 
