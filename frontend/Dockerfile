@@ -20,17 +20,10 @@ WORKDIR /app
 
 # Copy only built files and production dependencies
 COPY --from=build /app/dist ./dist
-
-# Copy package files for runtime reference
+COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/package*.json ./
-
-# Install only production dependencies in runtime image
-RUN npm ci --only=production --legacy-peer-deps
-
-COPY vite.preview.config.js ./vite.config.js
 
 EXPOSE 4173
 
-# Use exec form for proper signal handling
 ENTRYPOINT ["node", "--no-warnings"]
 CMD ["./node_modules/.bin/vite", "preview", "--host", "0.0.0.0", "--port", "4173"]
