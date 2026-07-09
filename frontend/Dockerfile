@@ -7,8 +7,8 @@ COPY package*.json ./
 
 RUN npm install --legacy-peer-deps
 
-# Install vite explicitly if not already in package.json
-RUN npm list vite > /dev/null 2>&1 || npm install --no-save vite@5.4.11
+# Upgrade vite to fix CVE-2026-53571 and esbuild vulnerabilities
+RUN npm install --save-dev vite@8.0.16
 
 COPY . .
 
@@ -19,11 +19,14 @@ FROM dhi.io/node:26
 
 WORKDIR /app
 
-# Copy built files from builder
+# Copy only built files and production dependencies
 COPY --from=build /app/dist ./dist
 
-# Copy all node_modules from builder (includes vite)
-COPY --from=build /app/node_modules ./node_modules
+# Copy package files for runtime reference
+COPY --from=build /app/package*.json ./
+
+# Install only production dependencies in runtime image
+RUN npm ci --only=production --legacy-peer-deps
 
 COPY vite.preview.config.js ./vite.config.js
 
