@@ -5,10 +5,9 @@ WORKDIR /app
 
 COPY package*.json ./
 
-RUN npm install --legacy-peer-deps
-
-# Upgrade vite to fix CVE-2026-53571 and esbuild vulnerabilities
-RUN npm install --save-dev vite@8.0.16
+RUN npm install --legacy-peer-deps && \
+    npm install --save-dev vite@8.0.16 && \
+    echo "Dependencies installed"
 
 COPY . .
 
