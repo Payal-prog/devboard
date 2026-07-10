@@ -1,38 +1,42 @@
 name: Code Tests
 
-on: 
+on:
     workflow_call:
 
 jobs:
-    test:
-        # Github runner
+    code-test:
         runs-on: ubuntu-latest
+        
         steps:
-            - name: Checkout Code
+            - name: Checkout Code            # Both frontend and backend code will be checked out in this step
               uses: actions/checkout@v7
 
-            - name: Setup Go
-              uses: actions/setup-go@v6
-              with:
-                go-version: '1.23'
-                go-version-file: 'go.mod'
-                cache-dependency-path: go.sum
-
-            - name: Setup NodeJs
+            - name: Setup NodeJs                                    # This borrows a pre-made tool created by GitHub designed to install Node.js.
               uses: actions/setup-node@v6
               with:
-                node-version: '20'
-                cache: npm
-                cache-dependency-path: frontend/package.json
-
-            - name: Install Dependencies
-              run: npm install --legacy-peer-deps
+                node-version: '20'                                  # Version of Node.js to install
+                cache: npm                                          # This activates a "memory" feature. Instead of downloading all your project's code packages from the internet every single time, GitHub saves a copy of them. This makes your future builds run much faster.
+                cache-dependency-path: frontend/package-lock.json   # This tells GitHub exactly where to look to see what packages your project needs. GitHub looks at this specific file (package-lock.json) inside your frontend folder.
+        
+            - name: Install npm Packages
+              run: npm ci
               working-directory: frontend
 
-            - name: Run Tests
-              run: npm run test 
+            - name: Frontend Linter
+              run: npm run lint
               working-directory: frontend
 
-            - name: Run Tests
-              run: go test 
+            - name: Setup Go                                        # This borrows a pre-made tool created by GitHub designed to install Go.
+              uses: actions/setup-go@v6
+              with:
+                go-version: '1.23'    
+                go-version-file: backend/go.mod                     # Version of Go to install
+                cache-dependency-path: backend/go.sum               # This tells GitHub exactly where to look to see what packages your project needs. GitHub looks at this specific file (go.sum) inside your backend folder.
+        
+            - name: Run Go Formatter
+              run: go fmt
+              working-directory: backend
+            
+            - name: Run Go Vet
+              run: go vet
               working-directory: backend
