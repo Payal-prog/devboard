@@ -32,6 +32,6 @@ jobs:
               with:
                 context: ./${{ matrix.folders}}                  # Build's context is the set of files located in the specified PATH or URL
                 push: true
-                tags: ${{ vars.DOCKERHUB_USERNAME }}/devboard-${{ matrix.folders}} :latest   
+                tags: ${{ vars.DOCKERHUB_USERNAME }}/devboard-${{ matrix.folders}}:latest   
 
          
