@@ -7,6 +7,8 @@ on:
 jobs:
     # The different workflows below will run in parallel, and each workflow will have its own set of jobs. 
     # The jobs within a workflow will also run in parallel, unless you specify dependencies between them.
+    
+    ##-----------CI--------------
     code-quality:
         uses: ./.github/workflows/code-quality.yml # uses - The location and version of a reusable workflow file to run as a job.
 
@@ -29,5 +31,13 @@ jobs:
     
     docker-push:
         uses: ./.github/workflows/docker-push-practice.yml
-        needs: [code-quality, secret-scanning, dependency-scan, docker-scans, sonar-qube, code-tests]
+        needs: [code-quality, secret-scanning, dependency-scan, docker-scans, sonar-qube, code-tests] # This correctly tells GitHub that docker-push must wait for all six of those workflows to finish.
         secrets: inherit
+
+        
+    ##-----------CD--------------
+    deploy:
+        uses: ./.github/workflows/deploy.yml
+        needs: [docker-push]  # Use needs to identify any jobs (docker-push) that must complete successfully before this job will run. 
+        secrets: inherit
+
