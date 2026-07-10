@@ -20,7 +20,7 @@ on:
 
 jobs: 
     deploy:
-        runs-on: ip-10-0-1-106
+        runs-on: self-hosted
         steps: 
             - name: Checkout Code
               uses: actions/checkout@v7
