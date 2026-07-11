@@ -35,7 +35,7 @@ jobs:
                 password: ${{ secrets.DOCKERHUB_TOKEN }}
 
             - name: Deploy containers using docker-compose
-              run: |                                        # The pipe symbol (|) is YAML syntax that allows you to write multiple lines of commands instead of just one.
+              run: |                                       # The pipe symbol (|) is YAML syntax that allows you to write multiple lines of commands instead of just one.
                 docker compose pull                         
                 docker compose up -d 
               
