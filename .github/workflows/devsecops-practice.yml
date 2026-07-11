@@ -41,3 +41,8 @@ jobs:
         needs: [docker-push]  # Use needs to identify any jobs (docker-push) that must complete successfully before this job will run. 
         secrets: inherit
 
+    dast-scan:
+        needs: [deploy]
+        uses: ./.github/workflows/dast.yml
+        secrets: inherit
+       
